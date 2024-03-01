@@ -10,23 +10,28 @@ int isStackEmpty(const Stack *stack) { return (stack->top == NULL); }
 
 void push(Stack *stack, char *data) {
   Node *newNode = (Node *)malloc(sizeof(Node));
-  if (isoperator(data)) {
-    char temp[255];
+  newNode->data = (char *)malloc(strlen(data) + 1);
+  char temp[255];
+  if (!is_number(data) && isoperator(data)) {
+
     snprintf(temp, 2, "%s", data);
-    newNode->data = temp;
+    strcpy(newNode->data, temp);
   } else {
-    newNode->data = data;
+    strcpy(temp, data);
+    strcpy(newNode->data, temp);
   }
   newNode->next = stack->top;
   stack->top = newNode;
 }
-char *pop(Stack *stack) {
+char *pop(Stack *stack) { // МЕНЯЕМ ВСЕ ТУТ ОШИБКА ДОЛЖНА БЫТЬ!!!!!!!!!!
   if (isStackEmpty(stack)) {
     return NULL;
   }
   char *data = stack->top->data;
   Node *temp = stack->top;
   stack->top = stack->top->next;
+  printf("freee\n");
+  free(temp->data);
   free(temp);
   return data;
 }
@@ -54,9 +59,10 @@ int isQueueEmpty(const Queue *queue) { return (queue->front == NULL); }
 
 void enqueue(Queue *queue, char *data) {
   Node *newNode = (Node *)malloc(sizeof(Node));
+  newNode->data = (char *)malloc(strlen(data) + 1);
   char temp[255];
   strcpy(temp, data);
-  newNode->data = temp;
+  strcpy(newNode->data, temp);
   newNode->next = NULL;
   if (isQueueEmpty(queue)) {
     queue->front = newNode;
@@ -66,18 +72,24 @@ void enqueue(Queue *queue, char *data) {
     queue->rear = newNode;
   }
 }
-char *dequeue(Queue *queue) {
+int dequeue(Queue *queue, char *string) {
   if (isQueueEmpty(queue)) {
-    return NULL;
+    return 1;
   }
-  char *data = queue->front->data;
+  char *data;
+  data = (char *)malloc(strlen(queue->front->data) + 1);
+  strcpy(data, queue->front->data);
   Node *temp = queue->front;
   queue->front = queue->front->next;
   if (queue->front == NULL) {
     queue->rear = NULL;
   }
+  printf("freee\n");
+  strcpy(string, data);
+  free(temp->data);
   free(temp);
-  return data;
+  free(data);
+  return 0;
 }
 char *front(Queue *queue) {
   if (isQueueEmpty(queue)) {
@@ -87,6 +99,6 @@ char *front(Queue *queue) {
 }
 void removeQueue(Queue *queue) {
   while (!isQueueEmpty(queue)) {
-    dequeue(queue);
+    dequeue(queue, NULL);
   }
 }

@@ -31,16 +31,21 @@ void removeStack(Stack *stack);
 Queue *createQueue();
 int isQueueEmpty(const Queue *queue);
 void enqueue(Queue *queue, char *data);
-char *dequeue(Queue *queue);
+int dequeue(Queue *queue, char *string);
 char *front(Queue *queue);
 void removeQueue(Queue *queue);
 
 int infix_to_postfix(char *infix, char *postfix);
-int postfix_result(const char *postfix, long double *result);
+int postfix_result(char *postfix, long double *result);
 
 int isoperator(char *c);
-int ishigher(char *c, char *top);
+int is_higher(char *c, char *top);
+int is_lower(char *c, char *top);
 int queue_to_string(Queue *queue, char *string);
 int peek_compare(Stack *stack, char *string);
+int isunary(char *index);
+int operator_process(Stack *stack, Queue *queue, char *index);
+int is_number(char *c);
+int calculation(Stack *stack, char *op, char *result);
 
 #endif // CALKULUS_H_

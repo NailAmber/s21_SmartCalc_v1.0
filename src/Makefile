@@ -8,7 +8,7 @@ POSIX=-D_POSIX_C_SOURCE=200809L
 TESTS=$(wildcard ./unit_tests/s21_*.c)
 
 all: clean calculus.a
-	gcc $(CFLAGS) $(POSIX) main.c calculus.a -o main
+	gcc $(CFLAGS) $(POSIX) main.c calculus.a -o main -lm
 
 clean:
 	rm -rf *.a *.o *.gcno *.gcda unit_test main *.css *.html *.gcov
@@ -41,4 +41,4 @@ cppcheck:
 	cppcheck --enable=all --suppress=missingIncludeSystem --suppress=constParameterPointer --std=c11 *.c *.h
 
 valgrind:
-	valgrind --trace-children=yes --track-fds=yes --track-origins=yes --leak-check=full --show-leak-kinds=all -s  ./unit_test
+	valgrind --trace-children=yes --track-fds=yes --track-origins=yes --leak-check=full --show-leak-kinds=all -s  ./main
