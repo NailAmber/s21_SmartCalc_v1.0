@@ -5,75 +5,84 @@ int infix_to_postfix(char *infix, char *postfix) {
     return 1;
   }
   char *index = infix;
-  Queue queue;
-  Stack stack;
+  Queue *queue;
+  Stack *stack;
+  createQueue(&queue);
+  createStack(&stack);
   int first_loop = 1;
   while (*index != '\0') {
-    if (first_loop || isunary(index)) {
-      if (*index == '-') {
-        enqueue(&queue, "-1.0");
-        operator_process(&stack, &queue, "*");
-        index++;
-      }
-      if (*index == '+') {
-        index++;
-      }
-    }
-    first_loop = 0;
-
-    if (isdigit((unsigned char)*index)) {
-      {
-        char data[255];
-        snprintf(data, 255, "%f", strtod(index, &index));
-        enqueue(&queue, data);
-      }
-    }
-    if (isalpha((unsigned char)*index)) {
-      char data[255];
-      snprintf(data, 2, "%s", index);
-      enqueue(&queue, data);
+    while (*index == ' ')
+    {
       index++;
     }
-
+    
+    number_process(stack, queue, &index, &first_loop);
     if (isoperator(index) && !isunary(index)) {
-      operator_process(&stack, &queue, index);
+      operator_process(stack, queue, index);
       index++;
     }
     if (*index == '(') {
-      push(&stack, "(");
+      push(stack, "(");
       index++;
     }
     if (*index == ')') {
-      while (!isStackEmpty(&stack) && !peek_compare(&stack, "(")) {
-        enqueue(&queue, pop(&stack));
+      while (!isStackEmpty(stack) && !peek_compare(stack, "(")) {
+        char temp[255] = {'\0'};
+        pop(stack, temp);
+        enqueue(queue, temp);
       }
-      pop(&stack);
+      pop(stack, NULL);
       index++;
     }
   }
-  while (!isStackEmpty(&stack)) {
-    enqueue(&queue, pop(&stack));
+  while (!isStackEmpty(stack)) {
+    char temp[255] = {'\0'};
+    pop(stack, temp);
+    enqueue(queue, temp);
   }
-  queue_to_string(&queue, postfix);
-  removeQueue(&queue);
-  removeStack(&stack);
+  queue_to_string(queue, postfix);
+  removeQueue(queue);
+  removeStack(stack);
   return 0;
 }
-int postfix_result(char *postfix, long double *result) {
-  Stack stack;
-  char *index = strtok(postfix, " ");
 
+int postfix_result(char *postfix, long double *result) {
+  Stack *stack;
+  createStack(&stack);
+  char *index = strtok(postfix, " ");
+  int first_loop = 1;
   while (index != NULL) {
-    if (is_number(index)) {
-      push(&stack, index);
+    if (first_loop && is_number(index)) {
+      printf("main peek is %s\n", peek(stack));
+      push(stack, index);
+      printf("main index is %s\n", index);
+    } else if (is_number(index)) {
+      printf("main peek is %s\n", peek(stack));
+      push(stack, index);
+      printf("main index is %s\n", index);
     } else if (isoperator(index)) {
       char preresult[255];
-      calculation(&stack, index, preresult);
-      push(&stack, preresult);
+      int error = calculation(stack, index, preresult);
+      if (error == 2)
+      {
+        printf("ERROR ZERO /\n");
+        removeStack(stack);
+        return 2;
+      } else 
+      if (error == 1) {
+        printf("ERROR\n");
+        removeStack(stack);
+        return 1;
+      }
+
+      push(stack, preresult);
     }
     index = strtok(NULL, " ");
+    first_loop = 0;
   }
-  *result = strtod(pop(&stack), NULL);
-  removeStack(&stack);
+  char temp[255] = {'\0'};
+  pop(stack, temp);
+  *result = strtod(temp, NULL);
+  removeStack(stack);
   return 0;
 }

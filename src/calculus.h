@@ -21,14 +21,14 @@ typedef struct Queue {
   Node *rear;
 } Queue;
 
-Stack *createStack();
+int createStack(Stack **stack);
 int isStackEmpty(const Stack *stack);
 void push(Stack *stack, char *data);
-char *pop(Stack *stack);
+int pop(Stack *stack, char *string);
 char *peek(const Stack *stack);
 void removeStack(Stack *stack);
 
-Queue *createQueue();
+int createQueue(Queue **queue);
 int isQueueEmpty(const Queue *queue);
 void enqueue(Queue *queue, char *data);
 int dequeue(Queue *queue, char *string);
@@ -45,6 +45,7 @@ int queue_to_string(Queue *queue, char *string);
 int peek_compare(Stack *stack, char *string);
 int isunary(char *index);
 int operator_process(Stack *stack, Queue *queue, char *index);
+int number_process(Stack *stack, Queue *queue, char **index, int *first_loop);
 int is_number(char *c);
 int calculation(Stack *stack, char *op, char *result);
 
